@@ -1,4 +1,4 @@
-# Vital
+# VitalMap 
 VitalMap Web Application
 In an emergency? In critical need of a pad, tampon, or condom at on Princeton's campus? VitalMap points you to the closest stores of menstrual and contraceptive products as well as the current stock at each location. As a community driven Web App, product stock levels will be updated by users in real-time. With VitalMap, you will never be caught without your vital products again.
 
