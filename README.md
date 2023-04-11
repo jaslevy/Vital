@@ -6,4 +6,4 @@ VitalMap's structure is the following:
 
 Data Management Tier, Processing Tier (connect JavaScript (frontend) to postgresql to run and render HTML pages and ensure that they are updated (flask), User Interface Tier (HTML, CSS, JavaScript, Bootstrap, and jQuery)
 
-Link to Deployed Product: https://vitalmap.onrender.com/
+Link to deployed Product: https://vitalmap.onrender.com/
