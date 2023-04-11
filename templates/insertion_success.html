@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+    <head>  
+        <title>Quantity Update Success</title>
+    </head>
+    <body>
+        <h1>Quantity Successfully Updated</h1>
+
+        You have updated the quantities at the following location:
+
+        <strong>{{location_string}}</strong>
+        <hr>
+        <table>
+        <tr>
+            <th align = "left">Item</th>
+            <th align = "left">Tampons</th>
+            <th align = "left">Pads</th>
+            <th align = "left">Condoms</th>
+        </tr>
+        <tr>
+            <td align = "center">#</td>
+            <td align = "center">{{new_tampon_quantity}}</td>
+            <td align = "center">{{new_pad_quantity}}</td>
+            <td align = "center">{{new_condom_quantity}}</td>
+        </tr>
+        </table>
+
+
+        Click <a href = '/'>here</a> to return to the map. 
+    </body>
+</html>

@@ -1,0 +1,8 @@
+set -o verbose
+
+# Create file .coverage
+python -m coverage run test_db.py
+
+# Create directory htmlcov
+python -m coverage html
+# View the results, htmlcov/index.html, using a browser

@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Contact</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+</head>
+
+<body style="background-color:#638475;">
+    <div class="container-fluid fw-bold" style="background-color:#638475; color:white;">
+        <div class="row">
+            <div class="col-sm">
+                <h1 style="text-align:left;">
+                    <span  type="button" data-bs-toggle="offcanvas" data-bs-target="#mySidenav" role="button"
+                        aria-controls="mySidenav">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" fill="currentColor" class="bi bi-list"
+                        viewBox="0 0 16 16">
+                        <path fill-rule="evenodd"
+                            d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z" />
+                        </svg>
+                    </span>
+                </h1>
+            </div>
+            <div class="col-sm">
+                <h1 style ="text-align: center;">
+                    Contact
+                </h1>
+            </div>
+            <div class="col-sm">
+
+            </div>
+        </div>
+    </div>
+    <br />
+    <div class="container-fluid">
+        <div class="card text-white text-center bg-white mb-3">
+            <div class="card-body">
+        
+        <!--- The form below is adapted from https://blog.getform.io/how-to-create-an-html-form-that-sends-you-an-email/ --->
+        <!--<form action="mailto:tdhughes@princeton.edu?cc=anotheremail@example.com&subject='VitalMap message' &body= 'This is a test'" method="POST"
+            enctype="multipart/form-data" name="EmailForm"
+            style=text-align:center>-->
+            <div style="text-align:center; color:#638475; font-weight: 400;">
+                <p style="text-align: center">Send the VitalMap team any
+                    feedback below</p>
+
+                Message:<br>
+                <textarea style="border-color:#638475; border-width: 2px;" name="message" id = "message" rows="6" cols=" 20" enctype="multipart/form-data"></textarea><br><br>
+                
+                <a href="mailto:tdhughes@princeton.edu?subject=VitalMap message &body="
+                    class="btn btn-warning" role="button" id = "emailLink" name = "emailLink">Send</a>
+                <br>
+                <small id="fn_error" class="form-text text-muted"></small>
+            </div>
+            <!--<button class="btn btn-outline-dark mb-3" type="submit" value="Submit">Send</button>-->
+        <!--</form>-->
+        <hr style="color:#ffffff;"/>
+            </div>
+            </div>
+    </div>
+    <br />
+    <div class="container-fluid" style="background-color:#638475; color:#ffffff;">
+        <p style="text-align:center; font-size:9pt">
+            Thank you for using VitalMap!
+        </p>
+        <p style="text-align:center; font-size:9pt">
+            Your feedback allows us to continue to improve this service.
+        </p>
+    </div>
+    <div class="container-fluid" style="background-color:#638475; color:white; text-align: center; font-size: 9pt; position: fixed; bottom: 0; width: 100%">
+        Created by
+        <a href="https://github.com/awiteck" style="color:#ffffff" target="_blank" >Aidan Witeck</a>
+        ,
+        <a href="https://github.com/ava-cr" style="color:#ffffff" target="_blank" >Ava Crnkovic</a>
+        ,
+        <a href="https://github.com/eunenbat" style="color:#ffffff" target="_blank" >Erkhem Unenbat</a>
+        ,
+        <a href="https://github.com/jaslevy" style="color:#ffffff" target="_blank" >Jasper Levy</a>
+        , and
+        <a href="https://thomasdhughes.com" style="color:#ffffff" target="_blank">Thomas Hughes</a>
+    </div>
+
+    <div class="offcanvas offcanvas-start" tabindex="-1" id="mySidenav" aria-labelledby="mySidenav"
+    style="background-color:#638475; color:white; max-width: 340px;">
+        <div class="offcanvas-header">
+        <h1 class="offcanvas-title" id="offcanvasExampleLabel">Welcome</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div><hr></div>
+        <div class="offcanvas-body">
+        <form action="/index" method="get">
+            <button class="btn btn-outline-light mb-3" type="submit"> Map </button>
+        </form>
+        <br />
+        <form action="/contact" method="get">
+            <button class="btn btn-outline-light mb-3" type="submit"> Contact </button>
+        </form>
+        <!--<input type="submit" value="VALUE2" name="action2" /> -->
+        <br />
+        <form action="/about" method="get">
+            <button class="btn btn-outline-light mb-3" type="submit"> About </button>
+        </form>
+        <br />
+        </div>
+    </div>
+
+    <script>
+        $('#message').on('input', function () {
+                $('#emailLink').prop(
+                    'href', "mailto:tdhughes@princeton.edu?subject=VitalMap message &body=" 
+                    + encodeURIComponent(this.value.trim()))
+            });
+        $('#emailLink').on('click', () => {
+            console.log("hi")
+            if ($('#message').val().trim() == '') {
+                $("#fn_error").html("<span class='text-danger'>Please enter a message</span>");
+                $('#emailLink').prop('href', "javascript: void (0)")
+            }
+            else {
+                $("#fn_error").html("")
+            }
+        })
+    </script>
+</body>
+
+</html>

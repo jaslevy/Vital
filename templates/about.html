@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html style="background-color:#638475">
+
+<head>
+    <title>About</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+
+<body>
+    <div class="container-fluid fw-bold" style="background-color:#638475; color:white;">
+        <div class="row">
+            <div class="col-sm">
+                <h1 style="text-align:left;">
+                    <span  type="button" data-bs-toggle="offcanvas" data-bs-target="#mySidenav" role="button"
+                        aria-controls="mySidenav">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" fill="currentColor" class="bi bi-list"
+                        viewBox="0 0 16 16">
+                        <path fill-rule="evenodd"
+                            d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z" />
+                        </svg>
+                    </span>
+                </h1>
+            </div>
+            <div class="col-sm">
+                <h1 style ="text-align: center;">
+                    VitalMap
+                </h1>
+            </div>
+            <div class="col-sm">
+
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid" style="background-color:#638475">
+        <div class="card text-white text-center bg-white mb-3">
+            <div class="card-body" style="color:#638475">
+                <h5 class="card-title">
+                    About
+                </h5>
+                <p class="card-text">In an emergency? In critical need of a pad, tampon, or condom? VitalMap points you to the closest stores of menstrual and contraceptive products as well as the current stock at each location. As a community driven Progressive Web App, product stock levels will be updated by users in real-time. With VitalMap, you will never be caught without your vital products again.</p>
+            </div>
+        <!-- </div>
+        <p style="text-align:center">In an emergency? In critical need of a pad, tampon, or condom? VitalMap points you to the closest stores of menstrual and contraceptive products as well as the current stock at each location. As a community driven Progressive Web App, product stock levels will be updated by users in real-time. With VitalMap, you will never be caught without your vital products again. </p>
+        <hr />
+            <p style="text-align:center">This Progressive Web App was created as a semester long project in Princeton's <a href = "https://registrar.princeton.edu/course-offerings/course-details?term=1234&courseid=002065" target="_blank" >COS 333: Advanced Programming Techniques</a> course taught by <a href = "https://www.cs.princeton.edu/~rdondero/" target="_blank" >Bob Dondero</a>.</p> -->
+        </div>
+    </div>
+    <div class="container-fluid" style="background-color:#638475; color:white; text-align: center; font-size: 9pt; position: fixed; bottom: 0; width: 100%">
+        Created by
+        <a href="https://github.com/awiteck" style="color:#ffffff" target="_blank" >Aidan Witeck</a>
+        ,
+        <a href="https://github.com/ava-cr" style="color:#ffffff" target="_blank" >Ava Crnkovic</a>
+        ,
+        <a href="https://github.com/eunenbat" style="color:#ffffff" target="_blank" >Erkhem Unenbat</a>
+        ,
+        <a href="https://github.com/jaslevy" style="color:#ffffff" target="_blank" >Jasper Levy</a>
+        , and
+        <a href="https://thomasdhughes.com" style="color:#ffffff" target="_blank">Thomas Hughes</a>
+    </div>
+
+
+    <div class="offcanvas offcanvas-start" tabindex="-1" id="mySidenav" aria-labelledby="mySidenav"
+    style="background-color:#638475; color:white; max-width: 340px;">
+        <div class="offcanvas-header">
+        <h1 class="offcanvas-title" id="offcanvasExampleLabel">Welcome</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div><hr></div>
+        <div class="offcanvas-body">
+        <form action="/index" method="get">
+            <button class="btn btn-outline-light mb-3" type="submit"> Map </button>
+        </form>
+        <br />
+        <form action="/contact" method="get">
+            <button class="btn btn-outline-light mb-3" type="submit"> Contact </button>
+        </form>
+        <!--<input type="submit" value="VALUE2" name="action2" /> -->
+        <br />
+        <form action="/about" method="get">
+            <button class="btn btn-outline-light mb-3" type="submit"> About </button>
+        </form>
+        <br />
+        </div>
+    </div>
+</body>
+</html>

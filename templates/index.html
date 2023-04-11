@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <title>VitalMap</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"/>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+  <style>
+    /* Need this to make the map sizing dynamic to the header */
+    .outer {
+      display: grid;
+      grid-template-rows: auto 1fr;
+      height: 100%;
+    }
+    html,
+    body{
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 14px;
+      color: #323232;
+    }
+    /* Icons form http://icons8.com */
+    .markerCond {
+      background-image: url('https://img.icons8.com/external-those-icons-flat-those-icons/512/external-Condom-medical-and-healthcare-those-icons-flat-those-icons.png');
+      background-size: cover;
+      width: 30px;
+      height: 30px;
+      cursor: pointer;
+    }
+    .markerMen {
+      background-image: url('https://img.icons8.com/external-flaticons-lineal-color-flat-icons/512/external-sanitary-towel-hygiene-flaticons-lineal-color-flat-icons.png');
+      background-size: cover;
+      width: 35px;
+      height: 35px;
+      cursor: pointer;
+    }
+    .markerAED {
+      background-image: url('https://img.icons8.com/color/512/aed.png');
+      background-size: cover;
+      width: 35px;
+      height: 35px;
+      cursor: pointer;
+    }
+    .markerCombo {
+      background-image: url('https://img.icons8.com/color/512/plus.png');
+      background-size: cover;
+      width: 35px;
+      height: 35px;
+      cursor: pointer;
+    }
+
+    .aedpopup {
+      position: relative;
+      display: inline-block;
+      cursor: pointer;
+    }
+
+    .aedpopup::before {
+      visibility: hidden;
+      content: "more info";
+      background-color: #fff;
+      padding: 10px;
+      border-radius: 5px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .aedpopup:hover::before {
+      visibility: visible;
+      display: inline;
+    }
+
+    form {
+      /* background-color: transparent; */
+      background: rgba(0, 0, 0, 0);
+    }
+
+    /* Hides the legend when screen width is less than 767px*/
+    @media (max-width:767px){
+      #legend {display: none;}
+    }
+  </style>
+
+  <script src=https://unpkg.com/maplibre-gl@2.1.9/dist/maplibre-gl.js></script>
+  <link href=https://unpkg.com/maplibre-gl@2.1.9/dist/maplibre-gl.css rel="stylesheet" />
+
+</head>
+
+<body>
+  <div class="buildingSideInfo" id="buildingSideInfo">
+  </div>
+  <div class="outer">
+    <div class="container-fluid" id="header" style="background-color:#638475; color:white; padding-top: 10px;">
+      <h2>
+        <span type="button" data-bs-toggle="offcanvas" data-bs-target="#mySidenav" role="button"
+          aria-controls="mySidenav">
+          <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" fill="currentColor" class="bi bi-list"
+            viewBox="0 0 16 16">
+            <path fill-rule="evenodd"
+              d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z" />
+          </svg>
+        </span>
+        <span class="text-left"> VitalMap </span>
+        <!-- <img class="text-right" src="images/tigerLOGO.png" width="35" height="35"/> -->
+      </h2>
+        <div class="col-8">
+          <form action="/filter" method="get">
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="checkbox" name="menstrual_products" id="flexCheckDefault" {% if mp_checked
+                %} checked {% endif %}>
+              <label class="form-check-label" for="flexCheckChecked"> Menstrual Products </label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="checkbox" name="condoms" id="flexCheckDefault" {% if condom_checked %}
+                checked {% endif %}>
+              <label class="form-check-label" for="flexCheckChecked"> Condoms </label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="checkbox" name="aeds" id="flexCheckDefault" {% if aed_checked %} checked
+                {% endif %}>
+              <label class="form-check-label" for="flexCheckChecked"> AEDs </label>
+            </div>
+            <button type="submit" class="btn btn-outline-light mb-3" value="Filter"> Filter </button>
+          </form>
+        </div>
+    </div>
+    <div id="map">
+      <div id="legend" class="container-fluid" style="background-color:#638475; color:white; position: absolute; z-index: 1;
+              top: 0px;
+              left: 0px;
+              width: 150px;
+              height: 315px;
+              padding-right: 0px;
+              border-radius: 0px 0px 30px 0px;">
+        <hr>
+        <div class="row">
+          <span
+            style="text-align: center; font-weight: bold; font-size: larger;">Legend</span>
+        </div>
+        <hr>
+        <!-- <div class="row">
+          <div class="col">
+            <span style="text-align: right; font-size: 7;">
+              Condoms
+            </span>
+          </div>
+          <div class="col-sm-5">
+            <a href=""><img
+                src="https://img.icons8.com/external-kiranshastry-lineal-color-kiranshastry/512/external-condom-medical-kiranshastry-lineal-color-kiranshastry.png"
+                alt="" width="30" height="30" horizontal-align="right" /></a>
+          </div>
+        </div> -->
+        <div class="row" style="text-align:center">
+          <div class="col">Condoms</div>
+          <div class="col"><img
+                src="https://img.icons8.com/external-those-icons-flat-those-icons/512/external-Condom-medical-and-healthcare-those-icons-flat-those-icons.png"
+                alt="" width="30" height="30" horizontal-align="right" /></a>
+          </div>
+          <div class="w-100"><br></div>
+          <div class="w-100"></div>
+          <div class="col">Menstrual Products</div>
+          <div class="col"><img
+                src="https://img.icons8.com/external-flaticons-lineal-color-flat-icons/512/external-sanitary-towel-hygiene-flaticons-lineal-color-flat-icons.png" alt=""
+                width="30" height="30" horizontal-align="right" /></a></div>
+          <div class="w-100"><br></div>
+          <div class="col">AEDs</div>
+          <div class="col"><img
+                src="https://img.icons8.com/color/512/aed.png"
+                alt="" width="30" height="30" horizontal-align="right" /></a>
+          </div>
+          <div class="w-100"><br></div>
+          <div class="col">Menstrual and AED</div>
+          <div class="col"><img
+                src="https://img.icons8.com/color/512/plus.png" alt=""
+                width="30" height="30" horizontal-align="right" /></a></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <nav id="filter-group" class="filter-group"></nav>
+
+  <div class="offcanvas offcanvas-start" tabindex="-1" id="mySidenav" aria-labelledby="mySidenav"
+    style="background-color:#638475; color:white; max-width: 340px;">
+    <div class="offcanvas-header">
+      <h1 class="offcanvas-title" id="offcanvasExampleLabel">Welcome</h1>
+      <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div><hr></div>
+    <div class="offcanvas-body">
+      <form action="/index" method="get">
+        <button class="btn btn-outline-light mb-3" type="submit"> Map </button>
+      </form>
+      <br />
+      <form action="/contact" method="get">
+        <button class="btn btn-outline-light mb-3" type="submit"> Contact </button>
+      </form>
+      <!--<input type="submit" value="VALUE2" name="action2" /> -->
+      <br />
+      <form action="/about" method="get">
+        <button class="btn btn-outline-light mb-3" type="submit"> About </button>
+      </form>
+      <div><hr></div>
+      <h4 style="text-align: center; font-style: bold;">Map Legend</h4>
+      <div><hr></div>
+      <div class="row" style="text-align:center">
+        <div class="col">Condoms</div>
+        <div class="col"><img src="https://img.icons8.com/external-those-icons-flat-those-icons/512/external-Condom-medical-and-healthcare-those-icons-flat-those-icons.png" alt="" width="30"
+          height="30" horizontal-align= "right"/></a></div>
+        <div class="w-100"><br></div>
+        <div class="w-100"></div>
+        <div class="col">Menstrual Products</div>
+        <div class="col"><img src="https://img.icons8.com/external-flaticons-lineal-color-flat-icons/512/external-sanitary-towel-hygiene-flaticons-lineal-color-flat-icons.png" alt="" width="30"
+          height="30" horizontal-align= "right"/></a></div>
+          <div class="w-100"><br></div>
+        <div class="col">AEDs</div>
+        <div class="col"><img src="https://img.icons8.com/color/512/aed.png" alt="" width="30"
+          height="30" horizontal-align= "right"/></a></div>
+          <div class="w-100"><br></div>
+          <div class="col">Menstrual and AED</div>
+        <div class="col"><img src="https://img.icons8.com/color/512/plus.png" alt="" width="30"
+          height="30" horizontal-align= "right"/></a></div>
+      </div>
+      <div><hr></div>
+      <p style="padding:15px; font-size: 1.2em; text-align: center;">VitalMap points you to the closest stores of menstrual, contraceptive products, and AEDs as
+        well as the current stock at each location. As a community driven Progressive Web App,
+        product stock levels will be updated by users in real-time. With VitalMap,
+        you will never be caught without your vital products again.
+      </p>
+      <div><hr></div>
+      <h4 style="text-align: center; font-style: italic;">Further Resources: Plan B</h4>
+      <div><hr></div>
+      <p style="padding:15px; font-size: 1.2em; text-align: center;">Princeton Students for Reproductive Justice has FREE emergency contraceptives.
+      If you are having an emergency, please text our hotline number <span style="color:orange;">(609) 250-2454</span> for free, same day anonymous delivery anywhere on campus.
+       This product is normally $50 at local drug stores, but we've got you covered!
+       We are currently only offering Plan B. Here's what you should know.
+      </p>
+      <ul>
+        <li>Plan B is recommended as soon as possible after unprotected sex and within 72 hours</li>
+        <li>Plan B is only recommended for people who weigh less than 165 pounds</li>
+        <li>Plan B is not meant to be used as regular birth control</li>
+      </ul>
+    </div>
+  </div>
+
+  <script>
+    const apiKey = "AAPKe1d721eb6b384492b5622a30c3bfc6e3eP7pm10PZMzOuseCgrRy2U5bM25WJIYq0NtRTPAsdke9l2n8KgRBEJGO0AkGZtK_";
+    const basemapEnum = "ArcGIS:Streets";
+
+    var filterGroup = document.getElementById('filter-group');
+
+    const map = new maplibregl.Map({
+      container: "map", // the id of the div element
+      style: `https://basemaps-api.arcgis.com/arcgis/rest/services/styles/${basemapEnum}?type=style&token=${apiKey}`,
+      zoom: 15, // starting zoom
+      center: [-74.6551, 40.3431] // starting location [longitude, latitude]
+    });
+
+    map.on('load', function() {
+      map.resize();
+    });
+
+  </script>
+
+  <!-- PUT MARKERS FOR EACH LOCATAION -->
+  {% for building in locations %}
+  <script>
+    handleClick = () => {
+      // just for fun lol
+      map.flyTo({
+        center: ['{{locations[building]["building_info"]["longitude"]}}', '{{locations[building]["building_info"]["latitude"]}}'],
+        speed: 0.8,
+        curve: 2,
+      });
+
+      document.getElementById("buildingSideInfo").innerHTML = `
+
+      <div class="offcanvas offcanvas-end show" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel" style="background-color:#638475; color:white">
+        <div class="offcanvas-header">
+          <h5 class="offcanvas-title" id="offcanvasRightLabel">Items in {{building}}</h5>
+          <button type="button" onclick="closeNav()" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button><hr>
+        </div>
+        <div class="offcanvas-body" style="background-color:#638475; color:white">
+          <div class="list-group list-group-flush overflow-auto h-100">
+            {% if locations[building]["building_info"]["has_aed"] == 1%}
+            <div class="alert alert-info">
+              <!-- <div class="aedpopup">There is an AED in this building.</div> TOOK THIS OUT because it wasn't working how I expected, was going to
+                use it to have a lil popup with a note on where exactly in the building you could find the AED but nah-->
+              There is an AED in this building.
+            </div>
+            {% endif %}
+            {% for location in locations[building]["location_info"]%}
+              <div class="list-group-item" style="background-color:#638475; color:white">
+                <label>Room: {{location["room"]}}, Floor {{location["floor"]}}</label><br>
+                <label>{{location["notes"]}}</label><br>
+                {% if locations[building]["building_info"]["has_menstrual"] == 1%}
+
+                {% if location["tampon_count"] == 0 %}
+                <label>Tampon Level: Empty</label><br>
+                {% endif %}
+                {% if location["tampon_count"] == 1 %}
+                <label>Tampon Level: Low</label><br>
+                {% endif %}
+                {% if location["tampon_count"] == 2 %}
+                <label>Tampon Level: Medium</label><br>
+                {% endif %}
+                {% if location["tampon_count"] >= 3 %}
+                <label>Tampon Level: High</label><br>
+                {% endif %}
+
+                {% if location["pad_count"] == 0 %}
+                <label>Pad Level: Empty</label><br>
+                {% endif %}
+                {% if location["pad_count"] == 1 %}
+                <label>Pad Level: Low</label><br>
+                {% endif %}
+                {% if location["pad_count"] == 2 %}
+                <label>Pad Level: Medium</label><br>
+                {% endif %}
+                {% if location["pad_count"] >= 3 %}
+                <label>Pad Level: High</label><br>
+                {% endif %}
+
+                <form action = "/updatempquantity" method = "post">
+                  <input name="location_id" type="hidden" value={{location["location_id"]}} />
+                  <div class="form-group">
+                    <select class="form-control" id="sel_tampons" name="update_tampons">
+                      <option selected>Update quantity of tampons</option>
+                      <option>0 - Empty</option>
+                      <option>1 - Low</option>
+                      <option>2 - Medium</option>
+                      <option>3 - High</option>
+                    </select>
+                    <select class="form-control" id="sel_pads" name="update_pads">
+                      <option selected>Update quantity of pads</option>
+                      <option>0 - Empty</option>
+                      <option>1 - Low</option>
+                      <option>2 - Medium</option>
+                      <option>3 - High</option>
+                    </select>
+                  </div>
+                  <br>
+                  <input class="btn btn-info" value="Submit Changes" type="submit" onClick="return confirm(\'Are you sure you want to update this quantity?\')"></input>
+                  <a href="mailto:{{location["responsible_person"]}}?subject={{building}}, Room {{location["room"]}} menstrual products refill&body=Hi! This is an automated email to inform you that the store of menstrual products in bathroom {{location["room"]}} on Floor {{location["floor"]}} of {{building}} is in need of refilling.\n Thank you!" class="btn btn-warning" role="button">Request Refill</a>
+                </form>
+                <br>
+                {% endif %}
+                {% if locations[building]["building_info"]["has_condom"] == 1%}
+
+                {% if location["condom_count"] == 0 %}
+                <label>Condom Level: Empty</label><br>
+                {% endif %}
+                {% if location["condom_count"] == 1 %}
+                <label>Condoms: Low</label><br>
+                {% endif %}
+                {% if location["condom_count"] == 2 %}
+                <label>Condom Level: Medium</label><br>
+                {% endif %}
+                {% if location["condom_count"] >= 3 %}
+                <label>Condom Level: High</label><br>
+                {% endif %}
+
+                <form action = "/updatecondomquantity" method = "post">
+                  <input name="location_id" type="hidden" value={{location["location_id"]}} />
+                  <div class="form-group">
+                    <select class="form-control" id="sel_condoms" name="update_condoms">
+                      <option selected>Update quantity of condoms</option>
+                      <option>0 - Empty</option>
+                      <option>1 - Low</option>
+                      <option>2 - Medium</option>
+                      <option>3 - High</option>
+                    </select>
+                  </div>
+                  <br>
+                  <input class="btn btn-info" value="Submit Changes" type="submit" onClick="return confirm(\'Are you sure you want to update this quantity?\')"></input>
+                  <a href="mailto:{{location["responsible_person"]}}?subject={{building}}, Room {{location["room"]}} contraceptive products refill&body=Hi! This is an automated email to inform you that the store of contraceptive products outside Room {{location["room"]}} on Floor {{location["floor"]}} of {{building}} is in need of refilling.\n Thank you!" class="btn btn-warning" role="button">Request Refill</a>
+                </form>
+                <br>
+                {% endif %}
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>`;
+      //document.getElementById('offcanvasRight').classList.toggle('show');
+
+    }
+    function closeNav() {
+      document.getElementById("buildingSideInfo").innerHTML = '';
+    }
+
+    var has_menstrual = '{{locations[building]["building_info"]["has_menstrual"]}}';
+    var has_condom = '{{locations[building]["building_info"]["has_condom"]}}';
+    var has_aed = '{{locations[building]["building_info"]["has_aed"]}}';
+    if (has_menstrual == 1 && has_condom == 0 && has_aed == 0) { // has_menstrual = 1
+      const cond = document.createElement('div');
+      cond.className = 'markerMen';
+      var marker = new maplibregl.Marker(cond)
+      .setLngLat(['{{locations[building]["building_info"]["longitude"]}}', '{{locations[building]["building_info"]["latitude"]}}'])
+      //.setPopup(new maplibregl.Popup().setHTML(html_string))
+      .addTo(map);
+    }
+    if (has_menstrual == 0 && has_condom == 1 && has_aed == 0) {
+      const cond = document.createElement('div');
+      cond.className = 'markerCond';
+      var marker = new maplibregl.Marker(cond)
+      .setLngLat(['{{locations[building]["building_info"]["longitude"]}}', '{{locations[building]["building_info"]["latitude"]}}'])
+      //.setPopup(new maplibregl.Popup().setHTML(html_string))
+      .addTo(map);
+    }
+    if (has_menstrual == 0 && has_condom == 0 && has_aed == 1) {
+      const cond = document.createElement('div');
+      cond.className = 'markerAED';
+      var marker = new maplibregl.Marker(cond)
+      .setLngLat(['{{locations[building]["building_info"]["longitude"]}}', '{{locations[building]["building_info"]["latitude"]}}'])
+      //.setPopup(new maplibregl.Popup().setHTML(html_string))
+      .addTo(map);
+    }
+    if (has_menstrual == 1 && has_aed == 1){
+      const cond = document.createElement('div');
+      cond.className = 'markerCombo';
+      var marker = new maplibregl.Marker(cond)
+      .setLngLat(['{{locations[building]["building_info"]["longitude"]}}', '{{locations[building]["building_info"]["latitude"]}}'])
+      //.setPopup(new maplibregl.Popup().setHTML(html_string))
+      .addTo(map);
+    }
+
+    marker.getElement().addEventListener('click', handleClick);
+
+  </script>
+  {% endfor %}
+
+
+  <!--Shows the user's current location to the map-->
+  <script>
+
+    map.addControl(
+      new maplibregl.GeolocateControl({
+        positionOptions: {
+          enableHighAccuracy: true
+        },
+        trackUserLocation: true
+      })
+    );
+    // add zoom in, out, and change heading
+    map.addControl(
+      new maplibregl.NavigationControl()
+    );
+  </script>
+</body>
+
+</html>
