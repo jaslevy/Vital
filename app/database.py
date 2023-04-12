@@ -15,10 +15,10 @@ def update_quantities(location_id, new_tampon_quantity, new_pad_quantity, new_co
     try:
         # Note: For pooling, use this code:
         # postgreSQL_pool = pool.SimpleConnectionPool(1, 20, database='nbrexzdy', user='nbrexzdy',
-        #                                             password='SAOZ2b5HpPXqNx4Uc8cZkNpPQ_L1l0BR', host='peanut.db.elephantsql.com', port='5432')
+        #                                             password='modified for security reasons', host='peanut.db.elephantsql.com', port='5432')
         # with postgreSQL_pool.getconn() as connection:
         # This is the external database URL for our ElephantSQL instance
-        database_url = 'postgres://nbrexzdy:SAOZ2b5HpPXqNx4Uc8cZkNpPQ_L1l0BR@peanut.db.elephantsql.com/nbrexzdy'
+        database_url = 'Modified_for_security'
         with psycopg2.connect(database_url) as connection:
             with connection.cursor() as cursor:
                 query = 'UPDATE filter_quantities '
@@ -38,7 +38,7 @@ def update_quantities(location_id, new_tampon_quantity, new_pad_quantity, new_co
 
 def get_data(menstrual_products, condoms):
     try:
-        database_url = 'postgres://nbrexzdy:SAOZ2b5HpPXqNx4Uc8cZkNpPQ_L1l0BR@peanut.db.elephantsql.com/nbrexzdy'
+        database_url = 'Modified_for_security'
         with psycopg2.connect(database_url) as connection:
             with connection.cursor() as cursor:
                 query = 'SELECT l.location_id, '
@@ -90,7 +90,8 @@ def get_buildings(menstrual, condom, aed):
           ), "Inputs are not in a valid format. Expects three (0, 1) integers"
 
     try:
-        database_url = 'postgres://nbrexzdy:SAOZ2b5HpPXqNx4Uc8cZkNpPQ_L1l0BR@peanut.db.elephantsql.com/nbrexzdy'
+        # database_url is modified for security reasons:
+        database_url = 'modified_for_security'
         with psycopg2.connect(database_url) as connection:
             # 0 = 1 addition makes it so you never have bad sql query
             with connection.cursor() as cursor:
